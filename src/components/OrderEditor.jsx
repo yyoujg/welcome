@@ -1,13 +1,30 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 
 const OrderEditor = () => {
-  const [menu, setMenu] = useState("족발");
-  const [address, setAddress] = useState("");
-  const [request, setRequest] = useState("");
+  const addressRef = useRef(null);
+  const [orderInfo, setOrderInfo] = useState({
+    menu: "족발",
+    address: "",
+    request: "",
+  });
+
+  const onChange = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+
+    setOrderInfo((prev) => {
+      return { ...prev, [name]: value };
+    });
+  };
 
   const onSubmit = () => {
+    if (addressRef.current.value === "") {
+      addressRef.current.focus();
+      return;
+    }
+
     alert(
-      `주문이 완료되었습니다 메뉴:${menu} 주소:${address} 요청사항:${request}`
+      `주문이 완료되었습니다 메뉴:${orderInfo.menu} 주소:${orderInfo.address} 요청사항:${orderInfo.request}`
     );
   };
 
@@ -17,10 +34,9 @@ const OrderEditor = () => {
       <div>
         <div style={{ marginBottom: 5, fontSize: 14 }}>메뉴 선택</div>
         <select
-          value={menu}
-          onChange={(e) => {
-            setMenu(e.target.value);
-          }}
+          name="menu"
+          value={orderInfo.menu}
+          onChange={onChange}
           style={{ width: 300, padding: 5 }}
         >
           <option value={"족발"}>족발</option>
@@ -32,23 +48,22 @@ const OrderEditor = () => {
       <div>
         <div style={{ marginBottom: 5, fontSize: 14 }}>배달 주소</div>
         <input
+          ref={addressRef}
+          name="address"
           style={{ width: 300, padding: 5 }}
           placeholder="주소) 서울특별시 xx동 .."
-          value={address}
-          onChange={(e) => {
-            setAddress(e.target.value);
-          }}
+          value={orderInfo.address}
+          onChange={onChange}
         />
       </div>
       <div>
         <div style={{ marginBottom: 5, fontSize: 14 }}>배달 요청사항</div>
         <textarea
+          name="request"
           style={{ width: 300, padding: 5 }}
           placeholder="배달 요청사항을 써 주세요..."
-          value={request}
-          onChange={(e) => {
-            setRequest(e.target.value);
-          }}
+          value={orderInfo.request}
+          onChange={onChange}
         />
       </div>
       <div>
